@@ -25,6 +25,7 @@ app.use(views(__dirname + '/views', {
   extension: 'pug'
 }))
 
+// 报错测试语句
 // app.use(() => {
 //   ctx.body = 'hello'
 // })
