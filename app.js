@@ -45,33 +45,27 @@ app.use(async (ctx, next) => {
   console.log(`get params:${JSON.stringify(ctx.request.query)} `)
   console.log(`post params:${JSON.stringify(ctx.request.body)} `)
   log4j.info(`log output info`)
-  await next()
-  // await next().catch((err) => {
-  //   if (err.status == '401') {
-  //     ctx.status == 200;
-  //     ctx.body = util.fail('Token认证失败', util.CODE.AUTH_ERROR)
-  //   } else {
-  //     throw err;
-  //   }
-  // })
+  // await next()
+  await next().catch((err) => {
+    if (err.status == '401') {
+      ctx.status == 200;
+      ctx.body = util.fail('Token认证失败', util.CODE.AUTH_ERROR)
+    } else {
+      throw err;
+    }
+  })
 })
 
 
-// 统一验证token的密钥
-// app.use(koajwt({ secret: 'regin' }))
+// 统一验证token的密钥,并过滤登录接口
+app.use(koajwt({ secret: 'regin' }).unless({
+  // 正则表达式转译登录路由
+  path: [/^\/api\/users\/login/]
+}))
 // routes 代理  一级路由
 router.prefix("/api")
-router.get('/leave/count', (ctx) => {
-  // 从前端获取token
-  const token = ctx.request.headers.authorization.split('')[1]
-  // 解密token前端密钥
-  const data = jwt.verify(token, { entries: 'regin' })
-  ctx.body = 'hello count' + data;
-})
 
-router.get('/menu/list', (ctx) => {
-  ctx.body = 'hello list';
-})
+
 
 // 二级路由
 router.use(users.routes(), users.allowedMethods())

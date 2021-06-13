@@ -19,11 +19,17 @@ router.prefix('/users')
 router.post('/login', async (ctx) => {
   try {
     const { userName, userPwd } = ctx.request.body;
-    // 查找数据
+    // 查找数据用户是否存在,并返回用户id
+    /**
+     * 返回数据库指定的字段,有三种方式
+     * 1."userId userName"
+     * 2.{userId:1,_id:0}  1代表返回  0代表不返回
+     * 3.select('userId')
+     */
     const res = await User.findOne({
       userName,
       userPwd
-    })
+    }, "userId userName userEmail state role deptId roleList")
     // data用来存储token
     const data = res._doc
 
